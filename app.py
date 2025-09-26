@@ -48,8 +48,7 @@ def image ():
     '''
 
 count = 0
-
-@app.route('/counter')
+@app.route("/counter")
 def counter():
     global count
     count += 1
@@ -60,15 +59,23 @@ def counter():
     return '''
 <!doctype html>
 <html>
-    <body>
-        Сколько раз вы сюда заходили:''' + str(count) + '''
-        <hr>
-        Дата и время: ''' + str(time) + '''<br>
-        Запрошенный адрес: ''' + url + '''<br>
-        Ваш IP-адрес: ''' + client_ip + '''<br>
-    </body>
+   <body>
+      Сколько раз вы сюда заходили ''' + str(count) + '''
+      <hr>
+      Дата и время: ''' + str(time) + '''<br>
+      Запрошенный адрес: ''' + url + '''<br>
+      Ваш IP-адрес: ''' + client_ip + '''<br>
+      <a href='/lab1/reset_counter'>Сбросить счётчик</a>
+  </body>
 </html>
 '''
+
+@app.route("/lab1/reset_counter")
+def reset_counter():
+    global count
+    count = 0
+    return redirect("/counter")
+
 
 @app.route("/info")
 def info():
