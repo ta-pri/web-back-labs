@@ -31,7 +31,7 @@ def author():
             </body>
         </html>"""
 
-@app.route('/lab1/image')
+@app.route('/lab1/image') 
 def image():
     path = url_for("static", filename="oak.jpg")
     css = url_for("static", filename="lab1.css")
@@ -51,6 +51,7 @@ def image():
     "X-My-Header-1": "Привет",          
     "X-My-Header-2": "12345"           
 }
+
 
 count = 0
 @app.route("/lab1/counter")
