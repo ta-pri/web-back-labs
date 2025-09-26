@@ -31,21 +31,26 @@ def author():
             </body>
         </html>"""
 
-@app.route ('/lab1/image')
-def image ():
+@app.route('/lab1/image')
+def image():
     path = url_for("static", filename="oak.jpg")
     css = url_for("static", filename="lab1.css")
     return f'''
-    <html>
-        <head>
-            <link rel="stylesheet" href="{css}">
-        </head>
-        <body>
-            <h1>Дуб</h1>
-            <img src="{path}">
-        </body>
-    </html>
-    '''
+<html>
+    <head>
+        <link rel="stylesheet" href="{css}">
+    </head>
+    <body>
+        <h1>Дуб</h1>
+        <img src="{path}">
+    </body>
+</html>
+''', 200, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Content-Language": "ru",            
+    "X-My-Header-1": "Привет",          
+    "X-My-Header-2": "12345"           
+}
 
 count = 0
 @app.route("/lab1/counter")
@@ -131,14 +136,32 @@ def lab1():
       Flask — фреймворк для создания веб-приложений на языке
       программирования Python, использующий набор инструментов
       Werkzeug, а также шаблонизатор Jinja2. Относится к категории так
-      называемых микрофреймворков — минималистичных каркасов
-      веб-приложений, сознательно предоставляющих лишь самые 
-      базовые возможности.
+      называемых микрофреймворков — минималистичных каркасов веб-приложений, 
+      сознательно предоставляющих лишь самые базовые возможности.
       <br><br>
       <a href='/'>На главную</a>
+      <h2>Список роутов</h2>
+      <ul>
+         <li><a href='/lab1/web'>/lab1/web</a></li>
+         <li><a href='/lab1/author'>/lab1/author</a></li>
+         <li><a href='/lab1/image'>/lab1/image</a></li>
+         <li><a href='/lab1/counter'>/lab1/counter</a></li>
+         <li><a href='/lab1/reset_counter'>/lab1/reset_counter</a></li>
+         <li><a href='/lab1/info'>/lab1/info</a></li>
+         <li><a href='/lab1/created'>/lab1/created</a></li>
+         <li><a href='/lab1/400'>/lab1/400</a></li>
+         <li><a href='/lab1/401'>/lab1/401</a></li>
+         <li><a href='/lab1/402'>/lab1/402</a></li>
+         <li><a href='/lab1/403'>/lab1/403</a></li>
+         <li><a href='/lab1/405'>/lab1/405</a></li>
+         <li><a href='/lab1/418'>/lab1/418</a></li>
+         <li><a href='/lab1/404'>/lab1/404</a></li>
+         <li><a href='/lab1/error500'>/lab1/error500</a></li>
+      </ul>
    </body>
 </html>
 """
+
 @app.route("/lab1/400")
 def error_400():
     return "<h1>400 Bad Request</h1><p>Неверный запрос</p>", 400
