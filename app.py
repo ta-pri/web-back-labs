@@ -182,3 +182,28 @@ def page_404():
     </body>
 </html>
 ''', 404
+
+
+@app.route("/lab1/error500")
+def error_500():
+    x = 1 / 0
+    return f"Результат: {x}" 
+
+@app.errorhandler(500)
+def internal_error(err):
+    return '''
+<!doctype html>
+<html>
+    <head>
+        <title>Ошибка сервера</title>
+        <style>
+            h1 { color: #ff4d4d; }
+            p { font-size: 18px; }
+        </style>
+    </head>
+    <body>
+        <h1>500 — Внутренняя ошибка сервера</h1>
+        <p>Произошла ошибка на сервере. Попробуйте позже.</p>
+    </body>
+</html>
+''', 500
