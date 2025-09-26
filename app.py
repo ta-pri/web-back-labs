@@ -162,3 +162,23 @@ def error_405():
 @app.route("/lab1/418")
 def error_418():
     return "<h1>418 I'm a teapot</h1><p>Я чайник </p>", 418
+
+
+@app.route("/lab1/404")
+def page_404():
+    css = url_for("static", filename="lab1.css")
+    img_path = url_for("static", filename="404.jpg")
+    return f'''
+<html>
+    <head>
+        <link rel="stylesheet" href="{css}">
+    </head>
+    <body>
+        <h1>404 — Ой! Что-то пошло не так</h1>
+        <p>Страница, которую вы ищете, не найдена.</p>
+        <img src="{img_path}" alt="404">
+        <br>
+        <a href='/'>На главную</a>
+    </body>
+</html>
+''', 404
