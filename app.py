@@ -47,8 +47,8 @@ def image():
 </html>
 ''', 200, {
     "Content-Type": "text/html; charset=utf-8",
-    "Content-Language": "ru",            
-    "X-My-Header-1": "Привет",          
+    "Content-Language": "ru-RU",            
+    "X-My-Header-1": "Privet",          
     "X-My-Header-2": "12345"           
 }
 

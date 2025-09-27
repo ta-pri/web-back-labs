@@ -1,0 +1,14 @@
+body {
+    background-color: #80f4e4;
+    color: #5f1111;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+img {
+    width: 400px;
+    height: auto;
+    border: 2px solid #555;
+    border-radius: 10px;
+    box-shadow: 0 0 10px gray;
+}
