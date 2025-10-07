@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, redirect
+from flask import Flask, url_for, request, redirect, abort
 import datetime
 app = Flask(__name__)
 
@@ -87,6 +87,43 @@ def reset_counter():
 def info():
     return redirect("/lab1/author")
 
+log_404 = []
+
+@app.errorhandler(404)
+def not_found(err):
+    css = url_for("static", filename="lab1.css")
+    img_path = url_for("static", filename="404.jpg")
+
+    client_ip = request.remote_addr
+    access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    url = request.url
+
+    log_404.append(f"[{access_time}, пользователь {client_ip}] зашёл на адрес: {url}")
+
+    log_html = "<ul>"
+    for entry in log_404:
+        log_html += f"<li>{entry}</li>"
+    log_html += "</ul>"
+
+    return f'''
+    <html>
+        <head>
+            <link rel="stylesheet" href="{css}">
+        </head>
+        <body>
+            <h1>404 — Ой! Что-то пошло не так</h1>
+            <p>Страница, которую вы ищете, не найдена.</p>
+            <img src="{img_path}" alt="404">
+            <p>Ваш IP: {client_ip}</p>
+            <p>Дата и время доступа: {access_time}</p>
+            <a href='/'>На главную</a>
+            <hr>
+            <h3>Журнал посещений 404:</h3>
+            {log_html}
+        </body>
+    </html>
+    ''', 404 
+
 @app.route("/lab1/created")
 def created():
     return '''
@@ -98,10 +135,6 @@ def created():
     </body>
 </html>
 ''', 201
-
-@app.errorhandler(404)
-def not_found(err):
-    return "нет такой страницы", 404
 
 @app.route("/")
 @app.route("/index")
@@ -187,46 +220,6 @@ def error_405():
 def error_418():
     return "<h1>418 I'm a teapot</h1><p>Я чайник </p>", 418
 
-
-log_404 = []  
-
-@app.route("/lab1/404")
-def page_404():
-    css = url_for("static", filename="lab1.css")
-    img_path = url_for("static", filename="404.jpg")
-    
-    client_ip = request.remote_addr
-    access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    url = request.url
-
-    log_404.append(f"[{access_time}, пользователь {client_ip}] зашёл на адрес: {url}")
-
-    log_html = "<ul>"
-    for entry in log_404:
-        log_html += f"<li>{entry}</li>"
-    log_html += "</ul>"
-
-    return f'''
-    <html>
-        <head>
-            <link rel="stylesheet" href="{css}">
-        </head>
-        <body>
-            <h1>404 — Ой! Что-то пошло не так</h1>
-            <p>Страница, которую вы ищете, не найдена.</p>
-            <img src="{img_path}" alt="404">
-            <p>Ваш IP: {client_ip}</p>
-            <p>Дата и время доступа: {access_time}</p>
-            <a href='/'>На главную</a>
-            <hr>
-            <h3>Журнал посещений 404:</h3>
-            {log_html}
-        </body>
-    </html>
-    ''', 404
-
-
-
 @app.route("/lab1/error500")
 def error_500():
     x = 1 / 0
@@ -258,3 +251,12 @@ def a():
 @app.route('/lab2/a/')
 def a2():
     return 'со слэшем'
+
+flower_list = ('роза', 'тюльпан', 'незабудка', 'ромашка')
+
+@app.route('/lab2/flowers/<int:flower_id>')
+def flowers(flower_id):
+    if flower_id >= len(flower_list):
+        abort(404)
+    else:
+        return "цветок: " + flower_list[flower_id]
