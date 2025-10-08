@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таисия Привалова. Лабораторная работа 2</title>
+    <title>Таисия Привалова. Лабораторная работа {{ lab }}</title>
 </head>
 <body>
     <header>
-        WEB-программирование, часть 2. Лабораторная работа 2
+        WEB-программирование, часть 2. Лабораторная работа {{ lab }}
     </header>
 
     <main>
@@ -15,7 +15,7 @@
     </main>
 
     <footer>
-        &copy; {{ name }}, ФБИ-33, 3 курс, 2023
+        &copy; {{ name }}, ФБИ-{{grup}}, {{curs}} курс, 2023
     </footer>
 </body>
 </html>
