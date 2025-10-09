@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таисия Привалова. Лабораторная работа {{ lab }}</title>
+    <title>{% if name %}
+            {{ name }}, 
+        {% else %}
+            Анонимус,
+        {% endif %} 
+        {% if lab%}Лабораторная работа {% endif %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css')}}">
 </head>
 <body>
     <header>
-        WEB-программирование, часть 2. Лабораторная работа {{ lab }}
+        WEB-программирование, часть 2. {% if lab%}Лабораторная работа 2{% endif %}
     </header>
 
     <main>
@@ -20,7 +25,24 @@
     </main>
 
     <footer>
-        &copy; {{ name }}, ФБИ-{{grup}}, {{curs}} курс, 2023
+        &copy; 
+        {% if name %}
+            {{ name }}, 
+        {% else %}
+            Анонимус,
+        {% endif %}
+        {% if grup %}
+            {{ grup }}, 
+        {% else %}
+            Группы нет,
+        {% endif %}
+        {% if curs %}
+            {{ curs }}, 
+        {% else %}
+            Неизвестен
+        {% endif %} 
+         курс, 
+        2025
     </footer>
 </body>
 </html>
