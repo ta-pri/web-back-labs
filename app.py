@@ -332,3 +332,18 @@ def all_flowers():
 def clear_flowers():
     flower_list.clear()
     return redirect('/lab2/all_flowers')
+
+@app.route('/lab2/calc/')
+def calc_default():
+    return redirect('/lab2/calc/1/1')
+
+@app.route('/lab2/calc/<int:a>')
+def calc_one(a):
+    return redirect(f'/lab2/calc/{a}/1')
+
+@app.route('/lab2/calc/<int:a>/<int:b>')
+def calc(a, b):
+    return render_template('calc.html', a=a, b=b)
+
+
+
