@@ -149,6 +149,7 @@ def index():
       <h1>НГТУ, ФБ, WEB-программирование, часть 2. Список лабораторных</h1>
       <ul>
          <li><a href='/lab1'>Первая лабораторная</a></li>
+         <li><a href="/lab2">Вторая лабораторная</a></li>
       </ul>
       <hr>
       <footer>
@@ -323,7 +324,8 @@ def all_flowers():
             {''.join(f'<li>{i}. {flower}</li>' for i, flower in enumerate(flower_list))}
         </ul>
         <p>Всего цветов: {len(flower_list)}</p>
-        <a href="/lab2/clear_flowers">Очистить список</a>
+        <a href="/lab2/clear_flowers">Очистить список</a><br>
+        <a href="/lab2/">Назад</a>
     </body>
 </html>
 '''

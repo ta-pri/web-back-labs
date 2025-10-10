@@ -14,6 +14,9 @@
 <body>
     <header>
         WEB-программирование, часть 2. {% if lab%}Лабораторная работа 2{% endif %}
+        <nav>
+            <a href="/">Главная</a> |
+        </nav>
     </header>
 
     <main>
@@ -27,6 +30,9 @@
             <li>{{ loop.index }} - {{ f.name }}: {{ f.price }} &#8381;</li>
             {% endfor%}
         </ul>
+        <li>
+            <a href="/lab2/">Назад</a>
+        </li>
     </main>
 
     <footer>
