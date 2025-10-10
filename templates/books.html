@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<head><title>Книги</title></head>
+<body>
+    <h1>Список книг</h1>
+    <ul>
+        {% for book in books %}
+        <li><b>{{ loop.index }}.</b> {{ book.title }} — {{ book.author }} ({{ book.genre }}, {{ book.pages }} стр.)</li>
+        {% endfor %}
+    </ul>
+    <a href="/lab2/">Назад</a>
+</body>
+</html>

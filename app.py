@@ -345,5 +345,20 @@ def calc_one(a):
 def calc(a, b):
     return render_template('calc.html', a=a, b=b)
 
+@app.route('/lab2/books')
+def books():
+    books = [
+        {'title': 'Мастер и Маргарита', 'author': 'М. Булгаков', 'genre': 'Роман', 'pages': 480},
+        {'title': 'Преступление и наказание', 'author': 'Ф. Достоевский', 'genre': 'Роман', 'pages': 600},
+        {'title': 'Евгений Онегин', 'author': 'А. Пушкин', 'genre': 'Поэма', 'pages': 250},
+        {'title': 'Гарри Поттер', 'author': 'Дж. Роулинг', 'genre': 'Фэнтези', 'pages': 430},
+        {'title': '1984', 'author': 'Дж. Оруэлл', 'genre': 'Антиутопия', 'pages': 320},
+        {'title': 'Война и мир', 'author': 'Л. Толстой', 'genre': 'Роман', 'pages': 1300},
+        {'title': 'Алиса в Стране чудес', 'author': 'Л. Кэрролл', 'genre': 'Сказка', 'pages': 200},
+        {'title': 'Три товарища', 'author': 'Э. М. Ремарк', 'genre': 'Роман', 'pages': 480},
+        {'title': 'Шерлок Холмс', 'author': 'А. Конан Дойль', 'genre': 'Детектив', 'pages': 520},
+        {'title': 'Маленький принц', 'author': 'А. де Сент-Экзюпери', 'genre': 'Притча', 'pages': 120},
+    ]
+    return render_template('books.html', books=books)
 
 
