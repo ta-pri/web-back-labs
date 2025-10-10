@@ -253,12 +253,22 @@ def a2():
     return 'со слэшем'
 
 flower_list = ['роза', 'тюльпан', 'незабудка', 'ромашка']
+
 @app.route('/lab2/flowers/<int:flower_id>')
-def flowers(flower_id):
+def flowers_html(flower_id):
     if flower_id >= len(flower_list):
         abort(404)
-    else:
-        return "цветок: " + flower_list[flower_id]
+    flower = flower_list[flower_id]
+    return f'''
+<!doctype html>
+<html>
+    <body>
+        <h1>Цветок: {flower}</h1>
+        <p>Номер: {flower_id}</p>
+        <a href="/lab2/all_flowers">Посмотреть все цветы</a>
+    </body>
+</html>
+'''
     
 @app.route('/lab2/add_flower/<name>')
 def add_flower(name):
@@ -297,3 +307,28 @@ def lab2():
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
     return render_template('filter.html', phrase=phrase)
+
+@app.route('/lab2/add_flower/')
+def add_flower_no_name():
+    return "<h1>400 Bad Request</h1><p>Вы не задали имя цветка</p>", 400
+
+@app.route('/lab2/all_flowers')
+def all_flowers():
+    return f'''
+<!doctype html>
+<html>
+    <body>
+        <h1>Все цветы</h1>
+        <ul>
+            {''.join(f'<li>{i}. {flower}</li>' for i, flower in enumerate(flower_list))}
+        </ul>
+        <p>Всего цветов: {len(flower_list)}</p>
+        <a href="/lab2/clear_flowers">Очистить список</a>
+    </body>
+</html>
+'''
+
+@app.route('/lab2/clear_flowers')
+def clear_flowers():
+    flower_list.clear()
+    return redirect('/lab2/all_flowers')
