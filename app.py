@@ -1,110 +1,29 @@
 from flask import Flask, url_for, request, redirect, abort, render_template
+from lab1 import lab1
+from lab2 import lab2
 import datetime
+
+
 app = Flask(__name__)
+app.register_blueprint(lab1)
+app.register_blueprint(lab2)
 
-@app.route("/lab1/web")
-def web():
-    return """<!doctype html>
-        <html>
-           <body>
-               <h1>web-сервер на flask</h1>
-               <a href="/author">author</a>
-           </body>
-        </html>""", 200, {
-            "X-Server": "sample",
-            "Content-Type": "text/plain; charset=utf-8" 
-        }
-
-@app. route("/lab1/author")
-def author():
-    name = "Привалова Таисия Дмитриевна"
-    group = "ФБИ-33"
-    faculty = "ФБ"
-
-    return """<!doctype html>
-        <html>
-            <body>
-                <p>Студент: """ + name + """</p>
-                <p>Группа: """ + group + """ </p>
-                <p>Факультет: """ + faculty + """</p>
-                <a href="/web">web</a>
-            </body>
-        </html>"""
-
-@app.route('/lab1/image') 
-def image():
-    path = url_for("static", filename="oak.jpg")
-    css = url_for("static", filename="lab1.css")
-    return f'''
-<html>
-    <head>
-        <link rel="stylesheet" href="{css}">
-    </head>
-    <body>
-        <h1>Дуб</h1>
-        <img src="{path}">
-    </body>
-</html>
-''', 200, {
-    "Content-Type": "text/html; charset=utf-8",
-    "Content-Language": "ru-RU",            
-    "X-My-Header-1": "Privet",          
-    "X-My-Header-2": "12345"           
-}
-
-
-count = 0
-@app.route("/lab1/counter")
-def counter():
-    global count
-    count += 1
-    time = datetime.datetime.today()
-    url = request.url
-    client_ip = request.remote_addr
-
-    return '''
-<!doctype html>
-<html>
-   <body>
-      Сколько раз вы сюда заходили ''' + str(count) + '''
-      <hr>
-      Дата и время: ''' + str(time) + '''<br>
-      Запрошенный адрес: ''' + url + '''<br>
-      Ваш IP-адрес: ''' + client_ip + '''<br>
-      <a href='/lab1/reset_counter'>Сбросить счётчик</a>
-  </body>
-</html>
-'''
-
-@app.route("/lab1/reset_counter")
-def reset_counter():
-    global count
-    count = 0
-    return redirect("/lab1/counter")
-
-
-@app.route("/lab1/info")
-def info():
-    return redirect("/lab1/author")
 
 log_404 = []
+
 
 @app.errorhandler(404)
 def not_found(err):
     css = url_for("static", filename="lab1.css")
     img_path = url_for("static", filename="404.jpg")
-
     client_ip = request.remote_addr
     access_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     url = request.url
-
     log_404.append(f"[{access_time}, пользователь {client_ip}] зашёл на адрес: {url}")
-
     log_html = "<ul>"
     for entry in log_404:
         log_html += f"<li>{entry}</li>"
     log_html += "</ul>"
-
     return f'''
     <html>
         <head>
@@ -124,17 +43,6 @@ def not_found(err):
     </html>
     ''', 404 
 
-@app.route("/lab1/created")
-def created():
-    return '''
-<!doctype html>
-<html>
-    <body>
-        <h1>Создано успешно</h1>
-        <div><i>что-то создано...</i></div>
-    </body>
-</html>
-''', 201
 
 @app.route("/")
 @app.route("/index")
@@ -157,74 +65,8 @@ def index():
       </footer>
    </body>
 </html>
-"""
+""" 
 
-@app.route("/lab1")
-def lab1():
-    return """
-<!doctype html>
-<html>
-   <head>
-      <title>Лабораторная 1</title>
-   </head>
-   <body>
-      Flask — фреймворк для создания веб-приложений на языке
-      программирования Python, использующий набор инструментов
-      Werkzeug, а также шаблонизатор Jinja2. Относится к категории так
-      называемых микрофреймворков — минималистичных каркасов веб-приложений, 
-      сознательно предоставляющих лишь самые базовые возможности.
-      <br><br>
-      <a href='/'>На главную</a>
-      <h2>Список роутов</h2>
-      <ul>
-         <li><a href='/lab1/web'>/lab1/web</a></li>
-         <li><a href='/lab1/author'>/lab1/author</a></li>
-         <li><a href='/lab1/image'>/lab1/image</a></li>
-         <li><a href='/lab1/counter'>/lab1/counter</a></li>
-         <li><a href='/lab1/reset_counter'>/lab1/reset_counter</a></li>
-         <li><a href='/lab1/info'>/lab1/info</a></li>
-         <li><a href='/lab1/created'>/lab1/created</a></li>
-         <li><a href='/lab1/400'>/lab1/400</a></li>
-         <li><a href='/lab1/401'>/lab1/401</a></li>
-         <li><a href='/lab1/402'>/lab1/402</a></li>
-         <li><a href='/lab1/403'>/lab1/403</a></li>
-         <li><a href='/lab1/405'>/lab1/405</a></li>
-         <li><a href='/lab1/418'>/lab1/418</a></li>
-         <li><a href='/lab1/404'>/lab1/404</a></li>
-         <li><a href='/lab1/error500'>/lab1/error500</a></li>
-      </ul>
-   </body>
-</html>
-"""
-
-@app.route("/lab1/400")
-def error_400():
-    return "<h1>400 Bad Request</h1><p>Неверный запрос</p>", 400
-
-@app.route("/lab1/401")
-def error_401():
-    return "<h1>401 Unauthorized</h1><p>Требуется авторизация</p>", 401
-
-@app.route("/lab1/402")
-def error_402():
-    return "<h1>402 Payment Required</h1><p>Требуется оплата</p>", 402
-
-@app.route("/lab1/403")
-def error_403():
-    return "<h1>403 Forbidden</h1><p>Доступ запрещён</p>", 403
-
-@app.route("/lab1/405")
-def error_405():
-    return "<h1>405 Method Not Allowed</h1><p>Метод не разрешён</p>", 405
-
-@app.route("/lab1/418")
-def error_418():
-    return "<h1>418 I'm a teapot</h1><p>Я чайник </p>", 418
-
-@app.route("/lab1/error500")
-def error_500():
-    x = 1 / 0
-    return f"Результат: {x}" 
 
 @app.errorhandler(500)
 def internal_error(err):
@@ -245,127 +87,3 @@ def internal_error(err):
 </html>
 ''', 500
 
-@app.route('/lab2/a')
-def a():
-    return 'без слэша'
-
-@app.route('/lab2/a/')
-def a2():
-    return 'со слэшем'
-
-flower_list = [
-    {"name": "роза", "price": 100},
-    {"name": "тюльпан", "price": 70},
-    {"name": "незабудка", "price": 50},
-    {"name": "ромашка", "price": 40},
-]
-
-@app.route('/lab2/flowers/delete/<int:flower_id>')
-def delete_flower(flower_id):
-    if flower_id >= len(flower_list):
-        abort(404)
-    flower_list.pop(flower_id)
-    return redirect('/lab2/all_flowers') 
-
-    
-@app.route('/lab2/add_flower/')
-def add_flower_no_name():
-    return "вы не задали имя цветка", 400
-
-@app.route('/lab2/example')
-def example():
-  name, lab, grup, curs = 'Таисия Привалова', 2, 'ФБИ-33', 3
-  fruits = [
-      {'name': 'яблоки', 'price': 100},
-      {'name': 'груши', 'price': 120},
-      {'name': 'апельсины', 'price': 80},
-      {'name': 'мандарины', 'price': 95},
-      {'name': 'манго', 'price': 321}
-  ]
-  return render_template('example.html',
-                         name=name, lab=lab, grup=grup,
-                         curs=curs, fruits=fruits)
-
-@app.route('/lab2/')
-def lab2():
-    return render_template('lab2.html')
-
-@app.route('/lab2/filters')
-def filters():
-    phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase=phrase)
-
-@app.route('/lab2/add_flower/', methods=['POST'])
-def add_flower_post():
-    name = request.form.get("name")
-    price = request.form.get("price")
-    if not name or not price:
-        return "Ошибка: не заданы имя или цена", 400
-    flower_list.append({"name": name, "price": int(price)})
-    return redirect("/lab2/all_flowers")
-
-
-@app.route('/lab2/all_flowers')
-def all_flowers():
-    return render_template("flowers.html", flowers=flower_list)
-
-
-
-@app.route('/lab2/clear_flowers')
-def clear_flowers():
-    flower_list.clear()
-    return redirect('/lab2/all_flowers')
-
-@app.route('/lab2/calc/')
-def calc_default():
-    return redirect('/lab2/calc/1/1')
-
-@app.route('/lab2/calc/<int:a>')
-def calc_one(a):
-    return redirect(f'/lab2/calc/{a}/1')
-
-@app.route('/lab2/calc/<int:a>/<int:b>')
-def calc(a, b):
-    return render_template('calc.html', a=a, b=b)
-
-@app.route('/lab2/books')
-def books():
-    books = [
-        {'title': 'Мастер и Маргарита', 'author': 'М. Булгаков', 'genre': 'Роман', 'pages': 480},
-        {'title': 'Преступление и наказание', 'author': 'Ф. Достоевский', 'genre': 'Роман', 'pages': 600},
-        {'title': 'Евгений Онегин', 'author': 'А. Пушкин', 'genre': 'Поэма', 'pages': 250},
-        {'title': 'Гарри Поттер', 'author': 'Дж. Роулинг', 'genre': 'Фэнтези', 'pages': 430},
-        {'title': '1984', 'author': 'Дж. Оруэлл', 'genre': 'Антиутопия', 'pages': 320},
-        {'title': 'Война и мир', 'author': 'Л. Толстой', 'genre': 'Роман', 'pages': 1300},
-        {'title': 'Алиса в Стране чудес', 'author': 'Л. Кэрролл', 'genre': 'Сказка', 'pages': 200},
-        {'title': 'Три товарища', 'author': 'Э. М. Ремарк', 'genre': 'Роман', 'pages': 480},
-        {'title': 'Шерлок Холмс', 'author': 'А. Конан Дойль', 'genre': 'Детектив', 'pages': 520},
-        {'title': 'Маленький принц', 'author': 'А. де Сент-Экзюпери', 'genre': 'Притча', 'pages': 120},
-    ]
-    return render_template('books.html', books=books)
-
-@app.route('/lab2/fruits')
-def fruits():
-    fruits = [
-        {'name': 'Яблоко', 'desc': 'Сладкий и сочный фрукт, символ здоровья.', 'img': 'apple.jpg'},
-        {'name': 'Банан', 'desc': 'Мягкий и питательный фрукт с высоким содержанием калия.', 'img': 'banana.jpg'},
-        {'name': 'Апельсин', 'desc': 'Цитрус с ярким вкусом и высоким содержанием витамина C.', 'img': 'orange.jpg'},
-        {'name': 'Груша', 'desc': 'Ароматный и нежный фрукт, богат клетчаткой.', 'img': 'pear.jpg'},
-        {'name': 'Ананас', 'desc': 'Тропический фрукт с освежающей кислинкой.', 'img': 'pineapple.jpg'},
-        {'name': 'Киви', 'desc': 'Фрукт с зелёной мякотью и множеством витаминов.', 'img': 'kiwi.jpg'},
-        {'name': 'Клубника', 'desc': 'Сочная и сладкая ягода, любимая летом.', 'img': 'strawberry.jpg'},
-        {'name': 'Вишня', 'desc': 'Кисло-сладкая ягода, из которой делают варенье.', 'img': 'cherry.jpg'},
-        {'name': 'Слива', 'desc': 'Фиолетовый плод с нежной мякотью.', 'img': 'plum.jpg'},
-        {'name': 'Малина', 'desc': 'Ароматная ягода, богатая витаминами.', 'img': 'raspberry.jpg'},
-        {'name': 'Черника', 'desc': 'Полезная лесная ягода для зрения.', 'img': 'blueberry.jpg'},
-        {'name': 'Манго', 'desc': 'Сладкий фрукт с тропическим ароматом.', 'img': 'mango.jpg'},
-        {'name': 'Арбуз', 'desc': 'Летняя ягода с сочной красной мякотью.', 'img': 'watermelon.jpg'},
-        {'name': 'Дыня', 'desc': 'Сладкий ароматный плод, похож на мед.', 'img': 'melon.jpg'},
-        {'name': 'Гранат', 'desc': 'Фрукт с множеством рубиновых зёрен.', 'img': 'pomegranate.jpg'},
-        {'name': 'Лимон', 'desc': 'Кислый цитрус, источник витамина C.', 'img': 'lemon.jpg'},
-        {'name': 'Персик', 'desc': 'Мягкий бархатный фрукт с косточкой.', 'img': 'peach.jpg'},
-        {'name': 'Абрикос', 'desc': 'Оранжевый фрукт с нежным вкусом.', 'img': 'apricot.jpg'},
-        {'name': 'Кокос', 'desc': 'Тропический плод с белой мякотью и соком.', 'img': 'coconut.jpg'},
-        {'name': 'Грейпфрут', 'desc': 'Крупный цитрус с горьковатым вкусом.', 'img': 'grapefruit.jpg'}
-    ]
-    return render_template('fruits.html', fruits=fruits)
