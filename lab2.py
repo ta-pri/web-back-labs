@@ -36,20 +36,20 @@ def example():
       {'name': 'мандарины', 'price': 95},
       {'name': 'манго', 'price': 321}
   ]
-  return render_template('example.html',
+  return render_template('lab2/example.html',
                          name=name, lab=lab, grup=grup,
                          curs=curs, fruits=fruits)
 
 
 @lab2.route('/lab2/')
 def lab():
-    return render_template('lab2.html')
+    return render_template('lab2/lab2.html')
 
 
 @lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase=phrase)
+    return render_template('lab2/filter.html', phrase=phrase)
 
 
 @lab2.route('/lab2/add_flower/', methods=['POST'])
@@ -64,7 +64,7 @@ def add_flower_post():
 
 @lab2.route('/lab2/all_flowers')
 def all_flowers():
-    return render_template("flowers.html", flowers=flower_list)
+    return render_template("lab2/flowers.html", flowers=flower_list)
 
 
 @lab2.route('/lab2/clear_flowers')
@@ -85,7 +85,7 @@ def calc_one(a):
 
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
-    return render_template('calc.html', a=a, b=b)
+    return render_template('lab2/calc.html', a=a, b=b)
 
 
 @lab2.route('/lab2/books')
@@ -102,31 +102,31 @@ def books():
         {'title': 'Шерлок Холмс', 'author': 'А. Конан Дойль', 'genre': 'Детектив', 'pages': 520},
         {'title': 'Маленький принц', 'author': 'А. де Сент-Экзюпери', 'genre': 'Притча', 'pages': 120},
     ]
-    return render_template('books.html', books=books)
+    return render_template('lab2/books.html', books=books)
 
 
 @lab2.route('/lab2/fruits')
 def fruits():
     fruits = [
-        {'name': 'Яблоко', 'desc': 'Сладкий и сочный фрукт, символ здоровья.', 'img': 'apple.jpg'},
-        {'name': 'Банан', 'desc': 'Мягкий и питательный фрукт с высоким содержанием калия.', 'img': 'banana.jpg'},
-        {'name': 'Апельсин', 'desc': 'Цитрус с ярким вкусом и высоким содержанием витамина C.', 'img': 'orange.jpg'},
-        {'name': 'Груша', 'desc': 'Ароматный и нежный фрукт, богат клетчаткой.', 'img': 'pear.jpg'},
-        {'name': 'Ананас', 'desc': 'Тропический фрукт с освежающей кислинкой.', 'img': 'pineapple.jpg'},
-        {'name': 'Киви', 'desc': 'Фрукт с зелёной мякотью и множеством витаминов.', 'img': 'kiwi.jpg'},
-        {'name': 'Клубника', 'desc': 'Сочная и сладкая ягода, любимая летом.', 'img': 'strawberry.jpg'},
-        {'name': 'Вишня', 'desc': 'Кисло-сладкая ягода, из которой делают варенье.', 'img': 'cherry.jpg'},
-        {'name': 'Слива', 'desc': 'Фиолетовый плод с нежной мякотью.', 'img': 'plum.jpg'},
-        {'name': 'Малина', 'desc': 'Ароматная ягода, богатая витаминами.', 'img': 'raspberry.jpg'},
-        {'name': 'Черника', 'desc': 'Полезная лесная ягода для зрения.', 'img': 'blueberry.jpg'},
-        {'name': 'Манго', 'desc': 'Сладкий фрукт с тропическим ароматом.', 'img': 'mango.jpg'},
-        {'name': 'Арбуз', 'desc': 'Летняя ягода с сочной красной мякотью.', 'img': 'watermelon.jpg'},
-        {'name': 'Дыня', 'desc': 'Сладкий ароматный плод, похож на мед.', 'img': 'melon.jpg'},
-        {'name': 'Гранат', 'desc': 'Фрукт с множеством рубиновых зёрен.', 'img': 'pomegranate.jpg'},
-        {'name': 'Лимон', 'desc': 'Кислый цитрус, источник витамина C.', 'img': 'lemon.jpg'},
-        {'name': 'Персик', 'desc': 'Мягкий бархатный фрукт с косточкой.', 'img': 'peach.jpg'},
-        {'name': 'Абрикос', 'desc': 'Оранжевый фрукт с нежным вкусом.', 'img': 'apricot.jpg'},
-        {'name': 'Кокос', 'desc': 'Тропический плод с белой мякотью и соком.', 'img': 'coconut.jpg'},
-        {'name': 'Грейпфрут', 'desc': 'Крупный цитрус с горьковатым вкусом.', 'img': 'grapefruit.jpg'}
+        {'name': 'Яблоко', 'desc': 'Сладкий и сочный фрукт, символ здоровья.', 'img': 'lab2/apple.jpg'},
+        {'name': 'Банан', 'desc': 'Мягкий и питательный фрукт с высоким содержанием калия.', 'img': 'lab2/banana.jpg'},
+        {'name': 'Апельсин', 'desc': 'Цитрус с ярким вкусом и высоким содержанием витамина C.', 'img': 'lab2/orange.jpg'},
+        {'name': 'Груша', 'desc': 'Ароматный и нежный фрукт, богат клетчаткой.', 'img': 'lab2/pear.jpg'},
+        {'name': 'Ананас', 'desc': 'Тропический фрукт с освежающей кислинкой.', 'img': 'lab2/pineapple.jpg'},
+        {'name': 'Киви', 'desc': 'Фрукт с зелёной мякотью и множеством витаминов.', 'img': 'lab2/kiwi.jpg'},
+        {'name': 'Клубника', 'desc': 'Сочная и сладкая ягода, любимая летом.', 'img': 'lab2/strawberry.jpg'},
+        {'name': 'Вишня', 'desc': 'Кисло-сладкая ягода, из которой делают варенье.', 'img': 'lab2/cherry.jpg'},
+        {'name': 'Слива', 'desc': 'Фиолетовый плод с нежной мякотью.', 'img': 'lab2/plum.jpg'},
+        {'name': 'Малина', 'desc': 'Ароматная ягода, богатая витаминами.', 'img': 'lab2/raspberry.jpg'},
+        {'name': 'Черника', 'desc': 'Полезная лесная ягода для зрения.', 'img': 'lab2/blueberry.jpg'},
+        {'name': 'Манго', 'desc': 'Сладкий фрукт с тропическим ароматом.', 'img': 'lab2/mango.jpg'},
+        {'name': 'Арбуз', 'desc': 'Летняя ягода с сочной красной мякотью.', 'img': 'lab2/watermelon.jpg'},
+        {'name': 'Дыня', 'desc': 'Сладкий ароматный плод, похож на мед.', 'img': 'lab2/melon.jpg'},
+        {'name': 'Гранат', 'desc': 'Фрукт с множеством рубиновых зёрен.', 'img': 'lab2/pomegranate.jpg'},
+        {'name': 'Лимон', 'desc': 'Кислый цитрус, источник витамина C.', 'img': 'lab2/lemon.jpg'},
+        {'name': 'Персик', 'desc': 'Мягкий бархатный фрукт с косточкой.', 'img': 'lab2/peach.jpg'},
+        {'name': 'Абрикос', 'desc': 'Оранжевый фрукт с нежным вкусом.', 'img': 'lab2/apricot.jpg'},
+        {'name': 'Кокос', 'desc': 'Тропический плод с белой мякотью и соком.', 'img': 'lab2/coconut.jpg'},
+        {'name': 'Грейпфрут', 'desc': 'Крупный цитрус с горьковатым вкусом.', 'img': 'lab2/grapefruit.jpg'}
     ]
-    return render_template('fruits.html', fruits=fruits)
+    return render_template('lab2/fruits.html', fruits=fruits)
