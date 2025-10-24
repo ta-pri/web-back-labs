@@ -100,3 +100,62 @@ def settings():
 
     resp = make_response(render_template('lab3/settings.html', color=color, bg_color=bg_color, font_size=font_size, font_style=font_style))
     return resp
+
+
+@lab3.route('/lab3/train')
+def train_ticket():
+    # Получаем данные из формы
+    fio = request.args.get('fio')
+    berth = request.args.get('berth')
+    linen = request.args.get('linen')
+    luggage = request.args.get('luggage')
+    age = request.args.get('age')
+    from_city = request.args.get('from_city')
+    to_city = request.args.get('to_city')
+    date = request.args.get('date')
+    insurance = request.args.get('insurance')
+
+    errors = []
+
+    # Если форма не отправлена — просто отрисовываем пустую
+    if not fio and not from_city and not to_city:
+        return render_template('lab3/train.html')
+
+    # Проверка заполненности
+    if not fio or not berth or not age or not from_city or not to_city or not date:
+        errors.append("Все поля обязательны к заполнению.")
+    else:
+        # Проверка возраста
+        try:
+            age = int(age)
+            if age < 1 or age > 120:
+                errors.append("Возраст должен быть от 1 до 120 лет.")
+        except ValueError:
+            errors.append("Возраст должен быть числом.")
+
+    # Если есть ошибки — показываем их
+    if errors:
+        return render_template('lab3/train.html', errors=errors,
+                               fio=fio, berth=berth, linen=linen, luggage=luggage,
+                               age=age, from_city=from_city, to_city=to_city, date=date,
+                               insurance=insurance)
+
+    # Расчёт стоимости
+    price = 1000 if age >= 18 else 700
+    if berth in ['нижняя', 'нижняя боковая']:
+        price += 100
+    if linen == 'on':
+        price += 75
+    if luggage == 'on':
+        price += 250
+    if insurance == 'on':
+        price += 150
+
+    ticket_type = "Детский билет" if age < 18 else "Взрослый билет"
+
+    # Отображаем билет
+    return render_template('lab3/ticket.html',
+                           fio=fio, berth=berth, linen=linen,
+                           luggage=luggage, age=age, from_city=from_city,
+                           to_city=to_city, date=date, insurance=insurance,
+                           price=price, ticket_type=ticket_type)

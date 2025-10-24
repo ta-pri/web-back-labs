@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block lab %}Лабораторная работа 3{% endblock %}
+
+{% block main %}
+<h1>Железнодорожный билет</h1>
+
+{% if errors %}
+    <ul style="color: red;">
+        {% for e in errors %}
+            <li>{{ e }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<form method="get">
+    <div>
+        <label>ФИО пассажира:</label>
+        <input type="text" name="fio" value="{{ fio or '' }}">
+    </div>
+
+    <div>
+        <label>Полка:</label>
+        <select name="berth">
+            <option value="">-- выберите --</option>
+            <option value="нижняя" {% if berth == 'нижняя' %}selected{% endif %}>Нижняя</option>
+            <option value="верхняя" {% if berth == 'верхняя' %}selected{% endif %}>Верхняя</option>
+            <option value="верхняя боковая" {% if berth == 'верхняя боковая' %}selected{% endif %}>Верхняя боковая</option>
+            <option value="нижняя боковая" {% if berth == 'нижняя боковая' %}selected{% endif %}>Нижняя боковая</option>
+        </select>
+    </div>
+
+    <div>
+        <label><input type="checkbox" name="linen" {% if linen == 'on' %}checked{% endif %}> С бельём (+75 ₽)</label>
+    </div>
+
+    <div>
+        <label><input type="checkbox" name="luggage" {% if luggage == 'on' %}checked{% endif %}> С багажом (+250 ₽)</label>
+    </div>
+
+    <div>
+        <label>Возраст:</label>
+        <input type="number" name="age" min="1" max="120" value="{{ age or '' }}">
+    </div>
+
+    <div>
+        <label>Пункт выезда:</label>
+        <input type="text" name="from_city" value="{{ from_city or '' }}">
+    </div>
+
+    <div>
+        <label>Пункт назначения:</label>
+        <input type="text" name="to_city" value="{{ to_city or '' }}">
+    </div>
+
+    <div>
+        <label>Дата поездки:</label>
+        <input type="date" name="date" value="{{ date or '' }}">
+    </div>
+
+    <div>
+        <label><input type="checkbox" name="insurance" {% if insurance == 'on' %}checked{% endif %}> Нужна страховка (+150 ₽)</label>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <button type="submit">Сформировать билет</button>
+    </div>
+</form>
+{% endblock %}
