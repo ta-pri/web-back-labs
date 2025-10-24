@@ -169,3 +169,86 @@ def clear_settings():
     resp.delete_cookie('font_size')
     resp.delete_cookie('font_style')
     return resp
+
+
+products = [
+    {'name': 'iPhone 15', 'price': 120000, 'brand': 'Apple', 'color': 'черный'},
+    {'name': 'Samsung Galaxy S24', 'price': 110000, 'brand': 'Samsung', 'color': 'серебристый'},
+    {'name': 'Xiaomi 14', 'price': 85000, 'brand': 'Xiaomi', 'color': 'белый'},
+    {'name': 'Google Pixel 8', 'price': 95000, 'brand': 'Google', 'color': 'черный'},
+    {'name': 'Asus Zenfone 10', 'price': 78000, 'brand': 'Asus', 'color': 'синий'},
+    {'name': 'Huawei P60 Pro', 'price': 89000, 'brand': 'Huawei', 'color': 'фиолетовый'},
+    {'name': 'Nothing Phone 2', 'price': 70000, 'brand': 'Nothing', 'color': 'прозрачный'},
+    {'name': 'Realme GT 5', 'price': 67000, 'brand': 'Realme', 'color': 'зеленый'},
+    {'name': 'Honor Magic 6', 'price': 90000, 'brand': 'Honor', 'color': 'золотой'},
+    {'name': 'OnePlus 12', 'price': 95000, 'brand': 'OnePlus', 'color': 'черный'},
+    {'name': 'Sony Xperia 1 V', 'price': 112000, 'brand': 'Sony', 'color': 'фиолетовый'},
+    {'name': 'Poco F6', 'price': 60000, 'brand': 'Poco', 'color': 'оранжевый'},
+    {'name': 'Infinix GT 20', 'price': 45000, 'brand': 'Infinix', 'color': 'черный'},
+    {'name': 'Tecno Phantom X3', 'price': 52000, 'brand': 'Tecno', 'color': 'голубой'},
+    {'name': 'ZTE Nubia Z50', 'price': 64000, 'brand': 'ZTE', 'color': 'серый'},
+    {'name': 'Motorola Edge 40', 'price': 68000, 'brand': 'Motorola', 'color': 'бежевый'},
+    {'name': 'Vivo X100', 'price': 88000, 'brand': 'Vivo', 'color': 'синий'},
+    {'name': 'Oppo Find X7', 'price': 97000, 'brand': 'Oppo', 'color': 'белый'},
+    {'name': 'Meizu 21', 'price': 76000, 'brand': 'Meizu', 'color': 'серебристый'},
+    {'name': 'Alcatel 3L', 'price': 32000, 'brand': 'Alcatel', 'color': 'черный'}
+]
+
+
+@lab3.route('/lab3/products')
+def products_list():
+    # минимальная и максимальная цены из списка
+    min_price_all = min(p['price'] for p in products)
+    max_price_all = max(p['price'] for p in products)
+
+    # получаем значения из запроса или кук
+    min_price = request.args.get('min_price') or request.cookies.get('min_price')
+    max_price = request.args.get('max_price') or request.cookies.get('max_price')
+
+    filtered = products
+
+    # если пользователь нажал "Сброс"
+    if request.args.get('reset'):
+        resp = make_response(redirect('/lab3/products'))
+        resp.delete_cookie('min_price')
+        resp.delete_cookie('max_price')
+        return resp
+
+    # если указаны оба значения — фильтруем
+    if min_price or max_price:
+        try:
+            min_price = int(min_price) if min_price else min_price_all
+            max_price = int(max_price) if max_price else max_price_all
+            if min_price > max_price:
+                min_price, max_price = max_price, min_price
+
+            filtered = [p for p in products if min_price <= p['price'] <= max_price]
+
+            resp = make_response(render_template(
+                'lab3/products.html',
+                products=filtered,
+                min_price=min_price,
+                max_price=max_price,
+                min_price_all=min_price_all,
+                max_price_all=max_price_all,
+                count=len(filtered)
+            ))
+            resp.set_cookie('min_price', str(min_price))
+            resp.set_cookie('max_price', str(max_price))
+            return resp
+
+        except ValueError:
+            # если что-то не так — просто показать все
+            filtered = products
+
+    # если фильтра нет — показываем всё
+    resp = make_response(render_template(
+        'lab3/products.html',
+        products=filtered,
+        min_price=min_price,
+        max_price=max_price,
+        min_price_all=min_price_all,
+        max_price_all=max_price_all,
+        count=len(filtered)
+    ))
+    return resp
