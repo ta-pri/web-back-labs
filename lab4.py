@@ -115,33 +115,41 @@ def tree():
 
 
 users = [
-    {'login': 'alex', 'password': '123'},
-    {'login': 'bob', 'password': '555'},
-    {'login': 'tasya', 'password': '1205'},
-    {'login': 'vanya', 'password': '775'}
+    {'login': 'alex', 'password': '123', 'name': 'Алексей Воробьев', 'gender': 'м'},
+    {'login': 'bob', 'password': '555', 'name': 'Боб Росс', 'gender': 'м'},
+    {'login': 'tasya', 'password': '1205', 'name': 'Таисия Привалова', 'gender': 'ж'},
+    {'login': 'vanya', 'password': '775', 'name': 'Иван Шевченко', 'gender': 'м'}
 ]
 
 
-@lab4.route('/lab4/login', methods = ['GET', 'POST'])
+@lab4.route('/lab4/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         if 'login' in session:
             authorized = True
-            login = session['login']
+            login_name = session['name']
         else:
             authorized = False
-            login = ''
-        return render_template('lab4/login.html', authorized=authorized, login=login)
+            login_name = ''
+        return render_template('lab4/login.html', authorized=authorized, login=login_name)
 
-    login = request.form.get('login')
-    password = request.form.get('password')
+    login = request.form.get('login', '').strip()
+    password = request.form.get('password', '').strip()
+
+    if login == '':
+        return render_template('lab4/login.html', error='Не введён логин', authorized=False, login=login)
+    if password == '':
+        return render_template('lab4/login.html', error='Не введён пароль', authorized=False, login=login)
 
     for user in users:
         if login == user['login'] and password == user['password']:
             session['login'] = login
+            session['name'] = user['name']
             return redirect('/lab4/login')
+
     error = 'Неверный логин и/или пароль'
-    return render_template('lab4/login.html', error=error, authorized=False)
+    return render_template('lab4/login.html', error=error, authorized=False, login=login)
+
 
 
 @lab4.route('/lab4/logout', methods = ['POST'])
