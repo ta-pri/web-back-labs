@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+<style>
+.lab5 {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.lab5 h1 {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.lab5-menu {
+    display: flex;
+    align-items: center;
+    background: #d9edf7;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.lab5-menu a {
+    margin-right: 10px;
+    padding: 5px 10px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #000;
+}
+
+.lab5-menu a:hover {
+    background: #eaeaea;
+}
+
+.lab5-user {
+    margin-left: auto;
+    font-weight: bold;
+}
+</style>
+
+<div class="lab5">
+    <h1>Flask и БД</h1>
+    <div class="lab5-menu">
+        <a href="/lab5/list">Список статей</a>
+        <a href="/lab5/create">Создать статью</a>
+        <a href="/lab5/login">Войти</a>
+        <a href="/lab5/register">Регистрация</a>
+        <div class="lab5-user">{{ username or 'Anonymous' }}</div>
+    </div>
+</div>
+{% endblock %}
