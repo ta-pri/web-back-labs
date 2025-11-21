@@ -1,28 +1,29 @@
 {% extends "base.html" %}
 
-{% block lab %}Лабораторная работа 5{% endblock %}
-
 {% block main %}
-    <h1>Создание статьи</h1>
+<h1>Создать статью</h1>
 
-    <form method="post">
-        <div>
-            <label>
-                Название статьи:
-                <input type="text" maxlength="50" name="title">
-            </label>
-        </div>
+<form method="post">
+    <label>Название:</label><br>
+    <input type="text" name="title" required><br><br>
 
-        <div>
-            <textarea name="article_text"></textarea>
-        </div>
+    <label>Текст статьи:</label><br>
+    <textarea name="article_text" required></textarea><br><br>
 
-        <div>
-            <button type="submit">Готово</button>
-        </div>
-        {% if error %}
-            <p style="color:red">{{ error }}</p>
-        {% endif %}
+    <label>
+        <input type="checkbox" name="is_favorite"> Любимая статья
+    </label>
+    <br>
 
-    </form>
+    <label>
+        <input type="checkbox" name="is_public"> Публичная статья
+    </label>
+    <br><br>
+
+    <button type="submit">Создать</button>
+
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
+    {% endif %}
+</form>
 {% endblock %}

@@ -45,12 +45,21 @@
 <div class="lab5">
     <h1>Flask и БД</h1>
     <div class="lab5-menu">
+
         <a href="/lab5/list">Список статей</a>
         <a href="/lab5/create">Создать статью</a>
+        <a href="/lab5/public">Публичные статьи</a>
+
+        <a href="/lab5/users">Пользователи</a>
+        <a href="/lab5/profile">Профиль</a>
+
         <a href="/lab5/login">Войти</a>
         <a href="/lab5/register">Регистрация</a>
+
         <div class="lab5-user">{{ login or 'Anonymous' }}</div>
     </div>
 </div>
+
 <a href="/lab5/logout">Выйти</a>
+
 {% endblock %}
