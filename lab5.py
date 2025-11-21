@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, redirect, current_app
+from flask import Blueprint, render_template, request, session, redirect, current_app, abort
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -118,6 +118,11 @@ def create():
     
     title = request.form.get('title')
     article_text = request.form.get('article_text')
+    
+    if not title or not article_text:
+        error = "Название и текст статьи не должны быть пустыми"
+        return render_template('lab5/create_article.html', error=error)
+
 
     conn, cur = db_connect()
 
@@ -161,6 +166,60 @@ def list():
         cur.execute("SELECT * FROM articles WHERE user_id=?;", (login_id,))
 
     articles = cur.fetchall()
+    if not articles:
+        return render_template('lab5/articles.html', articles=[], message="У вас нет ни одной статьи")
+
 
     db_close(conn, cur)
     return render_template('/lab5/articles.html', articles=articles)
+
+
+@lab5.route('/lab5/logout')
+def logout():
+    session.clear()
+    return redirect('/lab5/login')
+
+
+@lab5.route('/edit/<int:article_id>', methods=['GET', 'POST'])
+def edit_article(article_id):
+    conn, cur = db_connect()
+
+    cur.execute("SELECT id, title, article_text FROM articles WHERE id=%s", (article_id,))
+    article = cur.fetchone()
+    if not article:
+        abort(404)
+
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        article_text = request.form.get('article_text', '').strip()
+
+        if not title or not article_text:
+            return render_template('edit_article.html', article=article,
+                                   error="Поля не могут быть пустыми!")
+
+        cur.execute(
+            "UPDATE articles SET title=%s, article_text=%s WHERE id=%s",
+            (title, article_text, article_id)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect('/lab5/list')  
+
+    cur.close()
+    conn.close()
+    return render_template('/lab5/edit_article.html', article=article)
+
+
+
+@lab5.route('/delete/<int:article_id>')
+def delete_article(article_id):
+    conn, cur = db_connect()
+
+    cur.execute("DELETE FROM articles WHERE id=%s", (article_id,))
+    conn.commit()
+
+    cur.close()
+    conn.close()
+    return redirect('/lab5/list') 
+
