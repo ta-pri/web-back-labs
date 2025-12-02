@@ -25,20 +25,28 @@
             for(let i = 0; i < office_list.length; i++) {
                 const office = office_list[i];
                 const li = document.createElement('li');
-                li.innerText = `${office.number}: ${office.tenant || 'свободен'} (цена: ${office.price})`;
-
-                const bookingButton = document.createElement('button');
-                bookingButton.innerText = 'зарезервировать';
-                bookingButton.onclick = function() {booking(office.number)};
-                li.appendChild(bookingButton);
 
                 if (office.tenant) {
+                    li.classList.add('occupied-office');
+                } else {
+                    li.classList.add('free-office');
+                }
+
+                li.innerText = `${office.number}: ${office.tenant || 'свободен'} (цена: ${office.price})`;
+
+                if (!office.tenant) {
+                    const bookingButton = document.createElement('button');
+                    bookingButton.innerText = 'зарезервировать';
+                    bookingButton.className = 'book';
+                    bookingButton.onclick = function() { booking(office.number); };
+                    li.appendChild(bookingButton);
+                } else {
                     const freeButton = document.createElement('button');
                     freeButton.innerText = 'освободить';
-                    freeButton.onclick = function() {cancellation(office.number)};
+                    freeButton.className = 'free';
+                    freeButton.onclick = function() { cancellation(office.number); };
                     li.appendChild(freeButton);
-                }                
-
+                }   
                 ul.appendChild(li);
             }
             let total = 0;
@@ -133,6 +141,63 @@ function cancellation(officeNumber) {
 {% endblock %}
 
 {% block main %}
+<style>
+    h1 {
+        text-align: center;
+        margin: 10px 0;
+        font-size: 20px;
+        color: #2c3e50;
+    }
+
+    #office-list {
+        list-style: none;
+        padding: 0;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    #office-list li {
+        background-color: #fff;
+        margin: 10px 0;
+        padding: 8px 12px;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        transition: box-shadow 0.3s;
+        font-size: 16px;
+    }
+
+    #office-list li.free-office {
+        box-shadow: 0 0 6px 1px rgba(39, 174, 96, 0.5);
+    }
+
+    #office-list li.occupied-office {
+        box-shadow: 0 0 6px 1px rgba(192, 57, 43, 0.5); 
+    }
+
+    #office-list li button {
+        padding: 3px 6px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background-color: #fff;
+        cursor: pointer;
+    }
+
+    #office-list li button:hover {
+        opacity: 0.8;
+    }
+
+    #total-price {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+</style>
+
     <h1>Список кабинетов</h1>
     <ul id="office-list"></ul>
     <p id="total-price"></p>
