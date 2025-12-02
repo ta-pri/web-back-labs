@@ -32,6 +32,13 @@
                 bookingButton.onclick = function() {booking(office.number)};
                 li.appendChild(bookingButton);
 
+                if (office.tenant) {
+                    const freeButton = document.createElement('button');
+                    freeButton.innerText = 'освободить';
+                    freeButton.onclick = function() {cancellation(office.number)};
+                    li.appendChild(freeButton);
+                }                
+
                 ul.appendChild(li);
             }
         });
@@ -74,6 +81,42 @@ function booking(officeNumber) {
     }
     });
 }
+function cancellation(officeNumber) {
+        const url = '/lab6/json-rpc-api/';
+        const json = {
+            'jsonrpc': '2.0',
+            'method': 'cancellation',
+            'params': officeNumber,
+            'id': Math.round(Math.random()*1000)
+        };
+
+        fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(json)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if(data.error) {
+                switch(data.error.code){
+                    case 1:
+                        alert('Вы не авторизованы');
+                        break;
+                    case 3:
+                        alert('Офис не арендован');
+                        break;
+                    case 4:
+                        alert('Этот офис арендован не вами');
+                        break;
+                    default:
+                        alert('Ошибка');
+                }
+            } else {
+                document.getElementById('office-list').innerHTML = '';
+                getOfficeList();
+            }
+        });
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         getOfficeList();
