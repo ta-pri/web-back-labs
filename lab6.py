@@ -25,7 +25,6 @@ def db_connect():
 
     return conn, cur
 
-
 def db_close(conn, cur):
     conn.commit()
     cur.close()
@@ -42,7 +41,6 @@ def api():
     data = request.json
     req_id = data.get('id')
     method = data.get('method')
-
 
     if method == 'info':
         conn, cur = db_connect()
