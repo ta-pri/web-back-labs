@@ -19,7 +19,7 @@ function fillFilmList() {
             if (original && original !== films[i].title_ru) {
                 tdTitle.innerText = `(${original})`;
                 tdTitle.className = 'original-title';
-                } else {
+            } else {
                 tdTitle.innerText = '';
             }
 
@@ -28,7 +28,7 @@ function fillFilmList() {
             let editButton = document.createElement('button');
             editButton.innerText = 'редактировать';
             editButton.onclick = function() {
-                editFilm(i);
+                editFilm(films[i].id);
             };
             
             let delButton = document.createElement('button');
@@ -36,11 +36,11 @@ function fillFilmList() {
             delButton.className = 'del-btn';
 
             delButton.onclick = function() {
-                deleteFilm(i, films[i].title_ru);
+                deleteFilm(films[i].id, films[i].title_ru);
             };
 
-            tdActions.append(delButton);
             tdActions.append(editButton);
+            tdActions.append(delButton);
 
             tr.append(tdTitleRus);
             tr.append(tdTitle);
@@ -63,11 +63,16 @@ function deleteFilm(id, title) {
         });
 }
 
-fillFilmList();
+function clearErrors() {
+    document.getElementById('title-ru-error').innerText = '';
+    document.getElementById('title-error').innerText = '';
+    document.getElementById('year-error').innerText = '';
+    document.getElementById('description-error').innerText = '';
+}
 
 function showModal() {
     document.querySelector('div.modal').style.display = 'block';
-    document.getElementById('description-error').innerText = '';
+    clearErrors(); 
 }
 
 function hideModal() {
@@ -114,9 +119,12 @@ function sendFilm() {
         return resp.json();
     })
     .then(function(errors) {
-        if(errors.description) {
-            document.getElementById('description-error').innerText = errors.description;
-        }
+        clearErrors();
+        
+        if(errors.title_ru) document.getElementById('title-ru-error').innerText = errors.title_ru;
+        if(errors.title) document.getElementById('title-error').innerText = errors.title;
+        if(errors.year) document.getElementById('year-error').innerText = errors.year;
+        if(errors.description) document.getElementById('description-error').innerText = errors.description;
     });
 }
 
@@ -134,3 +142,5 @@ function editFilm(id) {
         showModal();
     });
 }
+
+fillFilmList();

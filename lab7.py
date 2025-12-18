@@ -1,113 +1,177 @@
-from flask import Blueprint, render_template, request, abort
-
+from flask import Blueprint, render_template, request, abort, jsonify, current_app
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import sqlite3
+from os import path
+from datetime import datetime
 lab7 = Blueprint('lab7', __name__)
 
+def db_connect():
+    if current_app.config['DB_TYPE'] == 'postgres':
+        conn = psycopg2.connect(
+            host='127.0.0.1',
+            database='taisiia_privalova_knowledge_base',
+            user='taisiia_privalova_knowledge_base',
+            password='123'
+        )
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+    else:
+        dir_path = path.dirname(path.realpath(__file__))
+        db_path = path.join(dir_path, "database.db")
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+    return conn, cur
+
+def db_close(conn, cur):
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def validate_film(film):
+    errors = {}
+    
+    if not film.get('title_ru'):
+        errors['title_ru'] = 'Русское название не может быть пустым'
+    
+    if not film.get('title') and not film.get('title_ru'):
+         errors['title'] = 'Укажите название'
+
+    year = film.get('year')
+    if not year:
+         errors['year'] = 'Укажите год'
+    else:
+        try:
+            year_int = int(year)
+            current_year = datetime.now().year
+            if year_int < 1895 or year_int > current_year:
+                errors['year'] = f'Год должен быть от 1895 до {current_year}'
+        except ValueError:
+            errors['year'] = 'Некорректный год'
+
+    description = film.get('description')
+    if not description:
+        errors['description'] = 'Заполните описание'
+    elif len(description) > 2000:
+        errors['description'] = 'Описание не должно превышать 2000 символов'
+
+    return errors
 
 @lab7.route('/lab7/')
 def main():
     return render_template('lab7/lab7.html')
 
-
-films = [
-    {
-        "title": "Fight Club",
-        "title_ru": "Бойцовский клуб",
-        "year": 1999,
-        "description": "Сотрудник страховой компании страдает хронической бессонницей \
-            и отчаянно пытается вырваться из мучительно скучной жизни. Однажды в \
-            очередной командировке он встречает некоего Тайлера Дёрдена — харизматического \
-            торговца мылом с извращенной философией. Тайлер уверен, что \
-            самосовершенствование — удел слабых, а единственное, ради чего стоит \
-            жить, — саморазрушение."
-    },
-    {
-        "title": "Titanic",
-        "title_ru": "Титаник",
-        "year": 1997,
-        "description": "Апрель 1912 года. В первом и последнем плавании шикарного \
-            «Титаника» встречаются двое. Пассажир нижней палубы Джек выиграл билет в карты, \
-            а богатая наследница Роза отправляется в Америку, чтобы выйти замуж по расчёту. \
-            Чувства молодых людей только успевают расцвести, и даже не классовые различия \
-            создадут испытания влюблённым, а айсберг, вставший на пути считавшегося \
-            непотопляемым лайнера."
-    },
-    {
-        "title": "The Fifth Element",
-        "title_ru": "Пятый элемент",
-        "year": 1997,
-        "description": "2257 год. Бывший секретный агент Корбен Даллас работает таксистом, \
-            ест в одном и том же ресторане и не ждёт перемен от жизни. Всё меняется, когда в его \
-            такси падает инопланетянка Лилу — единственное существо, способное спасти человечество. \
-            Вместе им предстоит остановить надвигающееся зло и предотвратить межгалактическую \
-            войну."
-    },
-    {
-        "title": "Interstellar",
-        "title_ru": "Интерстеллар",
-        "year": 2014,
-        "description": "Когда засуха, пыльные бури и вымирание растений \
-            приводят человечество к продовольственному кризису, коллектив \
-            исследователей и учёных отправляется сквозь червоточину \
-            (которая предположительно соединяет области пространства-времени\
-            через большое расстояние) в путешествие, чтобы превзойти прежние\
-            ограничения для космических путешествий человека и найти планету\
-            с подходящими для человечества условиями."
-    },
-    {
-        "title": "The Shawshank Redemption",
-        "title_ru": "Побег из Шоушенка",
-        "year": 1994,
-        "description": "Бухгалтер Энди Дюфрейн обвинён в убийстве собственной\
-            жены и её любовника. Оказавшись в тюрьме под названием Шоушенк, он\
-            сталкивается с жестокостью и беззаконием, царящими по обе стороны\
-            решётки. Каждый, кто попадает в эти стены, становится их рабом до\
-            конца жизни. Но Энди, обладающий живым умом и доброй душой, \
-            находит подход как к заключённым, так и к охранникам, добиваясь их\
-            особого к себе расположения."
-    },
-]
-
 @lab7.route('/lab7/rest-api/films/', methods=['GET'])
 def get_films():
-    return films
+    conn, cur = db_connect()
+    cur.execute("SELECT * FROM films")
+    rows = cur.fetchall()
+    db_close(conn, cur)
 
+    films_list = [dict(row) for row in rows]
+    return jsonify(films_list)
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])
 def get_film(id):
-    if id < 0 or id >= len(films):
+    conn, cur = db_connect()
+    
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT * FROM films WHERE id = %s", (id,))
+    else:
+        cur.execute("SELECT * FROM films WHERE id = ?", (id,))
+        
+    row = cur.fetchone()
+    db_close(conn, cur)
+    
+    if row is None:
         abort(404)
-    return films[id]
+    return dict(row)
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])
 def del_film(id):
-    if id < 0 or id >= len(films):
+    conn, cur = db_connect()
+    
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("DELETE FROM films WHERE id = %s", (id,))
+        row_count = cur.rowcount
+    else:
+        cur.execute("DELETE FROM films WHERE id = ?", (id,))
+        row_count = cur.rowcount
+        
+    db_close(conn, cur)
+    
+    if row_count == 0:
         abort(404)
-    del films[id]
     return '', 204
 
 @lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])
 def put_film(id):
     film = request.get_json()
-    if film.get('description') == '':
-        return {'description': 'Заполните описание'}, 400
     
+    errors = validate_film(film)
+    if errors:
+        return errors, 400
+
     if not film.get('title'):
         film['title'] = film['title_ru']
 
-    films[id] = film
-    return films[id]
+    conn, cur = db_connect()
+
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT id FROM films WHERE id = %s", (id,))
+    else:
+        cur.execute("SELECT id FROM films WHERE id = ?", (id,))
+        
+    if cur.fetchone() is None:
+        db_close(conn, cur)
+        abort(404)
+
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("""
+            UPDATE films 
+            SET title=%s, title_ru=%s, year=%s, description=%s 
+            WHERE id=%s
+        """, (film['title'], film['title_ru'], film['year'], film['description'], id))
+    else:
+        cur.execute("""
+            UPDATE films 
+            SET title=?, title_ru=?, year=?, description=? 
+            WHERE id=?
+        """, (film['title'], film['title_ru'], film['year'], film['description'], id))
+    
+    db_close(conn, cur)
+    return get_film(id)
 
 @lab7.route('/lab7/rest-api/films/', methods=['POST'])
 def add_film():
     film = request.get_json()
-    if film.get('description') == '':
-        return {'description': 'Заполните описание'}, 400
     
+    errors = validate_film(film)
+    if errors:
+        return errors, 400
+
     if not film.get('title'):
         film['title'] = film['title_ru']
-        
-    films.append(film)
-    return {"id": len(films) - 1}
+
+    conn, cur = db_connect()
+    
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("""
+            INSERT INTO films (title, title_ru, year, description) 
+            VALUES (%s, %s, %s, %s) RETURNING id
+        """, (film['title'], film['title_ru'], film['year'], film['description']))
+        new_id = cur.fetchone()['id']
+    else:
+        cur.execute("""
+            INSERT INTO films (title, title_ru, year, description) 
+            VALUES (?, ?, ?, ?)
+        """, (film['title'], film['title_ru'], film['year'], film['description']))
+        new_id = cur.lastrowid
+    
+    db_close(conn, cur)
+    
+    return {"id": new_id}
 
 
 
