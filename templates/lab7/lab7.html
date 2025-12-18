@@ -5,6 +5,60 @@
 {% block script %}
 <script src="{{ url_for('static', filename='lab7/main.js') }}"></script>
 <style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    button {
+        background-color: #008CBA;
+        color: white;
+        padding: 8px 16px;
+        margin: 2px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background-color: #005f7f;
+    }
+
+    button.del-btn {
+        background-color: #f44336;
+    }
+    button.del-btn:hover {
+        background-color: #da190b;
+    }
+
+    .original-title {
+        font-style: italic;
+        color: #555;
+        font-size: 0.9em;
+    }
     .modal {
         display: none; 
         position: fixed;
@@ -31,6 +85,7 @@
         display: block;
         width: 95%;
         margin-bottom: 10px;
+        padding: 8px;
     }
     .error-message {
     color: red;
