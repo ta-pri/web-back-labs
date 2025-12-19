@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование книги</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='lab2/favicon.ico', v=2) }}">
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f4f4f9; margin: 0; }
+        .edit-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; }
+        h2 { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .buttons { display: flex; justify-content: space-between; margin-top: 20px; }
+        button { padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; color: white; }
+        .btn-save { background: #28a745; }
+        .btn-cancel { background: #6c757d; text-decoration: none; display: inline-block; text-align: center; }
+        img.preview { max-width: 100px; display: block; margin: 5px 0; }
+        .student-info { font-size: 0.8em; margin-top: 20px; color: #aaa; text-align: center; padding-top: 10px; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="edit-box">
+    <h2>Редактирование</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        
+        <label>Название:</label>
+        <input type="text" name="title" value="{{ book.title }}" required>
+
+        <label>Автор:</label>
+        <input type="text" name="author" value="{{ book.author }}" required>
+
+        <label>Количество страниц:</label>
+        <input type="number" name="pages" value="{{ book.pages }}" required>
+
+        <label>Издательство:</label>
+        <input type="text" name="publisher" value="{{ book.publisher }}" required>
+
+        <label>Обложка (оставь пустым, если не меняешь):</label>
+        <img src="{{ book.cover_url }}" class="preview">
+        <input type="file" name="cover" accept="image/*">
+
+        <div class="buttons">
+            <a href="/rgz/admin" class="btn-cancel" style="padding: 10px 20px;">Отмена</a>
+            <button type="submit" class="btn-save">Сохранить</button>
+        </div>
+    </form>
+    <div class="student-info">Студент: Привалова Таисия | Группа: ФБИ-33 | Вариант 8</div>
+</div>
+
+</body>
+</html>
