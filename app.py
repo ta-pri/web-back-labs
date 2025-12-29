@@ -1,4 +1,6 @@
 from flask import Flask, url_for, request, redirect, abort, render_template
+from flask_sqlalchemy import SQLAlchemy
+from db import db
 from lab1 import lab1
 from lab2 import lab2
 from lab3 import lab3
@@ -12,12 +14,29 @@ from rgz import rgz
 
 import datetime
 import os
-
+from os import path
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'секретно-секретный секрет')
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'sqlite')
+
+if app.config['DB_TYPE'] == 'postgres':
+    db_name = 'taisiia_privalova_orm'
+    db_user = 'taisiia_privalova_orm'
+    db_password = '123'
+    host_ip = '127.0.0.1'
+    host_port = 5000
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
+        f'postgresqj://{db_user}:{db_password}@{host_ip}:{host_port}/{db_name}'
+else:
+  dir_path = path.dirname(path.realpath(__file__))
+  db_path = path.join(dir_path, "taisiia_privalova_orm.db")
+  app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+
+db.init_app(app)
+
 app.register_blueprint(lab1)
 app.register_blueprint(lab2)
 app.register_blueprint(lab3)
