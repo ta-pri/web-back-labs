@@ -92,7 +92,6 @@ function addFilm() {
     
     showModal();
 }
-
 function sendFilm() {
     const id = document.getElementById('id').value;
     const film = {

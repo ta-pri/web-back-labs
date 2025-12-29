@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 8{% endblock %}
+
+{% block main %}
+<style>
+    .lab8-menu {
+        display: flex;
+        align-items: center;
+        background: #d9edf7;
+        padding: 8px;
+        border-radius: 4px;
+        margin-top: 10px;
+    }
+
+    .lab8-menu a {
+        margin-right: 10px;
+        padding: 5px 10px;
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #000;
+    }
+
+    .lab8-user {
+        margin-left: auto;
+        font-weight: bold;
+    }
+</style>
+
+<h1>База знаний</h1>
+
+<div class="lab8-menu">
+    <a href="/lab8/articles">Список статей</a>
+    <a href="/lab8/create">Создать статью</a>
+    <a href="/lab8/login">Войти</a>
+    <a href="/lab8/register">Регистрация</a>
+
+    <div class="lab8-user">anonymous</div>
+</div>
+{% endblock %}
