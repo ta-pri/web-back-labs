@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block main %}
+<style>
+    .articles-box {
+        max-width: 800px;
+        margin: 30px auto;
+    }
+
+    .articles-box h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .articles-actions {
+        text-align: right;
+        margin-bottom: 15px;
+    }
+
+    .articles-actions a {
+        padding: 6px 10px;
+        background: #5bc0de;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .article-card {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f9f9f9;
+    }
+
+    .article-card h3 {
+        margin-top: 0;
+    }
+
+    .article-card p {
+        white-space: pre-wrap;
+    }
+
+    .article-controls {
+        margin-top: 10px;
+    }
+
+    .article-controls a {
+        margin-right: 10px;
+        text-decoration: none;
+        color: #337ab7;
+    }
+
+    .article-controls button {
+        padding: 4px 8px;
+        background: #d9534f;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .article-controls button:hover {
+        background: #c9302c;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="articles-box">
+    <h1>Мои статьи</h1>
+
+    <div class="articles-actions">
+        <a href="/lab8/create">Создать новую статью</a>
+    </div>
+
+    <hr>
+
+    {% for article in articles %}
+        <div class="article-card">
+            <h3>{{ article.title }}</h3>
+            <p>{{ article.article_text }}</p>
+
+            <div class="article-controls">
+                <a href="/lab8/edit/{{ article.id }}">Редактировать</a>
+
+                <form action="/lab8/delete/{{ article.id }}" method="post" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Удалить?')">
+                        Удалить
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <p>У вас пока нет статей.</p>
+    {% endfor %}
+
+    <a class="back-link" href="/lab8/">← Назад в меню</a>
+</div>
+{% endblock %}

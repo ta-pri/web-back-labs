@@ -29,7 +29,7 @@ def load_users(login_id):
     return users.query.get(int(login_id))
 
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'секретно-секретный секрет')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret secret')
 app.config['DB_TYPE'] = os.getenv('DB_TYPE', 'sqlite')
 
 if app.config['DB_TYPE'] == 'postgres':

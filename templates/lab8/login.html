@@ -3,20 +3,79 @@
 {% block lab %}Лабораторная работа 8{% endblock %}
 
 {% block main %}
+<style>
+    .login-box {
+        max-width: 400px;
+        margin: 30px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #f9f9f9;
+    }
+
+    .login-box h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .login-box div {
+        margin-bottom: 12px;
+    }
+
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+    }
+
+    .login-box button {
+        width: 100%;
+        padding: 8px;
+        background: #c97be3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .login-box button:hover {
+        background: #8932a6;
+    }
+
+    .error {
+        color: red;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="login-box">
     <h1>Вход в систему</h1>
 
     <form action="/lab8/login" method="post">
         <div>
-            <label> Логин: <input type="text" name="login"> </label>
+            <label>Логин</label>
+            <input type="text" name="login">
         </div>
+
         <div>
-            <label> Пароль: <input type="password" name="password"> </label>
+            <label>Пароль</label>
+            <input type="password" name="password">
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" name="remember">
+                Запомнить меня
+            </label>
         </div>
 
         {% if error %}
-            <div style="color: red;">{{ error }}</div>
+            <div class="error">{{ error }}</div>
         {% endif %}
 
         <button type="submit">Вход</button>
     </form>
+</div>
 {% endblock %}
