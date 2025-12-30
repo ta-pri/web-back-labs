@@ -2,8 +2,95 @@
 
 {% block lab %}Лабораторная работа 9{% endblock %}
 
-{% block script %}{% endblock %}
-
 {% block main %}
-    <h1>Поздравления</h1>
+<style>
+    .gift-container {
+        position: relative; 
+        width: 100%;
+        height: 500px;     
+        background-color: #fdfdfd;
+        border: 2px dashed #eee;
+        border-radius: 10px;
+        overflow: hidden; 
+        margin-top: 20px;
+    }
+
+    .gift-box {
+        position: absolute; 
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .gift-box:hover {
+        transform: scale(1.1) rotate(5deg);
+        z-index: 99;
+    }
+
+    .gift-box.is-opened {
+        filter: grayscale(1) opacity(0.3);
+        pointer-events: none;
+    }
+
+    #gift-modal {
+        display: none; 
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border: 3px solid gold;
+        border-radius: 20px;
+        z-index: 1000;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(0,0,0,0.2);
+    }
+</style>
+
+<div style="text-align: center;">
+    <h1>Сайт-поздравление</h1>
+    <h2>С новым годом!</h2>
+    <p>Осталось нераскрытых коробок: <b id="rem-count">{{ unopened }}</b></p>
+</div>
+
+<div class="gift-container">
+    {% for gift in gifts %}
+        <img src="/static/lab9/{{ gift.box_img }}" 
+             class="gift-box {% if gift.is_empty %}is-opened{% endif %}"
+             style="left: {{ gift.left }}%; top: {{ gift.top }}%; width: 90px;"
+             id="box-{{ gift.id }}"
+             onclick="openBox({{ gift.id }})">
+    {% endfor %}
+</div>
+
+<div id="gift-modal">
+    <h2 id="congrat-text" style="color: #c62828;"></h2>
+    <img id="gift-img-res" src="" style="width: 150px; border-radius: 10px;">
+    <br><br>
+    <button onclick="document.getElementById('gift-modal').style.display='none'">Закрыть</button>
+</div>
+
+<script>
+function openBox(id) {
+    fetch('/lab9/open_box', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({box_id: id})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('congrat-text').innerText = data.text;
+            document.getElementById('gift-img-res').src = data.image;
+            document.getElementById('gift-modal').style.display = 'block';
+
+            const box = document.getElementById(`box-${id}`);
+            box.classList.add('is-opened');
+
+            document.getElementById('rem-count').innerText = data.remaining;
+        } else {
+            alert(data.message);
+        }
+    });
+}
+</script>
 {% endblock %}
