@@ -37,6 +37,13 @@
     <a href="/lab8/login">Войти</a>
     <a href="/lab8/register">Регистрация</a>
 
-    <div class="lab8-user">anonymous</div>
+    <div class="lab8-user">
+    {% if current_user.is_authenticated %}
+        {{ current_user.login }} 
+        <a href="/lab8/logout" style="margin-left: 10px; font-size: 12px;">Выйти</a>
+    {% else %}
+        anonymous
+    {% endif %}
+</div>
 </div>
 {% endblock %}
