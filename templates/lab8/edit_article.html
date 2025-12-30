@@ -60,7 +60,11 @@
             <label>Текст</label>
             <textarea name="text">{{ article.article_text }}</textarea>
         </div>
-
+        <div>
+            <label>
+                <input type="checkbox" name="is_public" {% if article.is_public %}checked{% endif %}> Публичная статья
+            </label>
+        </div>
         <button type="submit">Сохранить</button>
     </form>
 </div>

@@ -70,7 +70,11 @@
         {% if error %}
             <div class="error">{{ error }}</div>
         {% endif %}
-
+        <div>
+            <label>
+                <input type="checkbox" name="is_public" checked> Публичная статья
+            </label>
+        </div>
         <button type="submit">Создать</button>
     </form>
 </div>

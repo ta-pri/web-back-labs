@@ -3,6 +3,7 @@ from db import db
 from db.models import users, articles
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, current_user, logout_user 
+from sqlalchemy import or_
 
 lab8 = Blueprint('lab8', __name__)
 
@@ -62,6 +63,34 @@ def article_list():
     user_articles = articles.query.filter_by(login_id=current_user.id).all()
     return render_template('lab8/articles.html', articles=user_articles)
 
+@lab8.route('/lab8/public_articles/')
+def public_articles():
+    public_list = articles.query.filter_by(is_public=True).all()
+    return render_template('lab8/public_articles.html', articles=public_list)
+
+@lab8.route('/lab8/search/', methods=['GET', 'POST'])
+def search():
+    query = request.form.get('query') if request.method == 'POST' else request.args.get('query')
+    results = []
+    
+    if query:
+        query_lower = query.lower()
+    
+        if current_user.is_authenticated:
+            visibility_crit = or_(articles.is_public == True, articles.login_id == current_user.id)
+        else:
+            visibility_crit = (articles.is_public == True)
+
+        accessible_articles = articles.query.filter(visibility_crit).all()
+
+        results = [
+            a for a in accessible_articles 
+            if query_lower in a.title.lower() or query_lower in a.article_text.lower()
+        ]
+        
+    return render_template('lab8/search.html', articles=results, query=query)
+
+
 @lab8.route('/lab8/create', methods=['GET', 'POST'])
 @login_required
 def create_article():
@@ -70,12 +99,13 @@ def create_article():
     
     title = request.form.get('title')
     text = request.form.get('text')
+    is_public = request.form.get('is_public') == 'on'
     
     if not title or not text:
         return render_template('lab8/create_article.html', error='Заполните все поля')
     
     new_article = articles(login_id=current_user.id, title=title, article_text=text, 
-                           is_favorite=False, is_public=True, likes=0)
+                           is_favorite=False, is_public=is_public, likes=0)
     db.session.add(new_article)
     db.session.commit()
     return redirect('/lab8/articles/')
@@ -84,7 +114,6 @@ def create_article():
 @login_required
 def edit_article(article_id):
     article = articles.query.get_or_404(article_id)
-    
     if article.login_id != current_user.id:
         return redirect('/lab8/articles/')
 
@@ -93,6 +122,7 @@ def edit_article(article_id):
     
     article.title = request.form.get('title')
     article.article_text = request.form.get('text')
+    article.is_public = request.form.get('is_public') == 'on' 
     db.session.commit()
     return redirect('/lab8/articles/')
 
@@ -110,3 +140,4 @@ def delete_article(article_id):
 def logout():
     logout_user()
     return redirect('/lab8/')
+    
