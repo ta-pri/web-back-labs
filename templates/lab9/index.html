@@ -14,23 +14,15 @@
         overflow: hidden; 
         margin-top: 20px;
     }
-
     .gift-box {
         position: absolute; 
         cursor: pointer;
         transition: transform 0.2s;
     }
-
-    .gift-box:hover {
-        transform: scale(1.1) rotate(5deg);
-        z-index: 99;
-    }
-
     .gift-box.is-opened {
         filter: grayscale(1) opacity(0.3);
         pointer-events: none;
     }
-
     #gift-modal {
         display: none; 
         position: fixed;
@@ -44,11 +36,28 @@
         text-align: center;
         box-shadow: 0 0 30px rgba(0,0,0,0.2);
     }
+    .auth-btn {
+        padding: 10px 20px;
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 10px;
+    }
 </style>
 
 <div style="text-align: center;">
     <h1>Сайт-поздравление</h1>
-    <h2>С новым годом!</h2>
+
+    {% if current_user.is_authenticated %}
+        <p>Добро пожаловать, <b>{{ current_user.login }}</b>!</p>
+        <button class="auth-btn" onclick="resetGifts()">Дед Мороз (Наполнить коробки)</button>
+    {% else %}
+        <p>Вы вошли как гость. Некоторые подарки доступны только после 
+           <a href="/lab8/login">входа</a>.</p>
+    {% endif %}
+
     <p>Осталось нераскрытых коробок: <b id="rem-count">{{ unopened }}</b></p>
 </div>
 
@@ -56,7 +65,8 @@
     {% for gift in gifts %}
         <img src="/static/lab9/{{ gift.box_img }}" 
              class="gift-box {% if gift.is_empty %}is-opened{% endif %}"
-             style="left: {{ gift.left }}%; top: {{ gift.top }}%; width: 90px;"
+             style="left: {{ gift.left }}%; top: {{ gift.top }}%; width: 90px; 
+                    {% if gift.is_for_auth and not current_user.is_authenticated %} border: 2px solid red; border-radius: 10px; {% endif %}"
              id="box-{{ gift.id }}"
              onclick="openBox({{ gift.id }})">
     {% endfor %}
@@ -87,6 +97,18 @@ function openBox(id) {
             box.classList.add('is-opened');
 
             document.getElementById('rem-count').innerText = data.remaining;
+        } else {
+            alert(data.message);
+        }
+    });
+}
+
+function resetGifts() {
+    fetch('/lab9/reset', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload(); 
         } else {
             alert(data.message);
         }
